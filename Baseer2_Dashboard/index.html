@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BASEER 2 — Safety Command Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://cdn.jsdelivr.net/npm/roslib/build/roslib.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">B2</div>
+        <div>
+          <h1>BASEER 2</h1>
+          <span>Autonomous Safety Monitoring System</span>
+        </div>
+      </div>
+      <div class="connection">
+        <span id="connectionDot" class="status-dot offline"></span>
+        <div><strong id="connectionText">ROS DISCONNECTED</strong><small id="connectionSub">Waiting for rosbridge</small></div>
+        <button id="demoBtn" class="demo-btn">DEMO MODE</button>
+        <button id="connectBtn">CONNECT</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero-grid">
+        <article class="panel camera-panel">
+          <div class="panel-head"><div><span class="eyebrow">LIVE VISION</span><h2>Gas Monitoring</h2></div><span id="gasStateBadge" class="badge normal">NORMAL</span></div>
+          <div class="camera"><canvas id="gasCanvas"></canvas><div class="camera-overlay"><span>● LIVE</span><span id="gasCameraTime">--:--:--</span></div></div>
+          <div class="camera-meta"><div><span>Detection score</span><strong id="gasScore">0.00</strong></div><div><span>Gas sensor</span><strong id="gasSensorInline">-- ppm</strong></div><div><span>Fusion</span><strong id="gasFusion">NOT CONFIRMED</strong></div></div>
+        </article>
+
+        <article class="panel camera-panel">
+          <div class="panel-head"><div><span class="eyebrow">LIVE VISION</span><h2>Fall Detection</h2></div><span id="fallStateBadge" class="badge normal">NORMAL</span></div>
+          <div class="camera"><canvas id="fallCanvas"></canvas><div class="camera-overlay"><span>● LIVE</span><span id="fallCameraTime">--:--:--</span></div></div>
+          <div class="camera-meta"><div><span>Detection score</span><strong id="fallScore">0.00</strong></div><div><span>Last event</span><strong id="fallLastEvent">NONE</strong></div><div><span>SOS channel</span><strong id="sosState">STANDBY</strong></div></div>
+        </article>
+      </section>
+
+      <section class="metrics-grid">
+        <article class="metric"><span class="metric-icon gas">GAS</span><div><small>Gas concentration</small><strong id="gasPpm">-- ppm</strong><canvas id="gasSpark" class="spark"></canvas></div><span id="gasPpmState" class="metric-state">NO DATA</span></article>
+        <article class="metric"><span class="metric-icon alert">!</span><div><small>Active alerts</small><strong id="alertCount">0</strong><canvas id="alertRateSpark" class="spark"></canvas></div><span id="alertState" class="metric-state">CLEAR</span></article>
+        <article class="metric"><span class="metric-icon fall">F</span><div><small>Fall status</small><strong id="fallMetric">NORMAL</strong><canvas id="fallSpark" class="spark"></canvas></div><span id="fallMetricState" class="metric-state">MONITORING</span></article>
+        <article class="metric"><span class="metric-icon scada">SC</span><div><small>SCADA decision</small><strong id="scadaMetric">NO ACTION</strong></div><span id="scadaState" class="metric-state">STANDBY</span></article>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel map-panel">
+          <div class="panel-head"><div><span class="eyebrow">POSITION</span><h2>Live Location</h2></div><span class="badge normal" id="gpsBadge">GPS OK</span></div>
+          <div class="map-wrap"><div id="gpsMap"></div><div class="map-label" id="gpsLabel">GPS: waiting...</div></div>
+          <div class="gps-values"><div><span>Latitude</span><strong id="latitude">--</strong></div><div><span>Longitude</span><strong id="longitude">--</strong></div><div><span>Altitude</span><strong id="altitude">-- m</strong></div></div>
+        </article>
+
+        <article class="panel timeline-panel">
+          <div class="panel-head"><div><span class="eyebrow">EVENT STREAM</span><h2>Alert Timeline</h2></div><button class="ghost" id="clearEvents">CLEAR</button></div>
+          <canvas id="alertChart" class="alert-chart"></canvas>
+          <div id="timeline" class="timeline"><div class="empty">No alerts received yet.</div></div>
+        </article>
+      </section>
+
+      <section class="panel alerts-panel">
+        <div class="panel-head"><div><span class="eyebrow">OPERATOR VIEW</span><h2>Alert Details</h2></div><span id="latestAlertBadge" class="badge normal">SYSTEM CLEAR</span></div>
+        <div id="alertDetails" class="alert-details empty-details">Waiting for a decision from the detection nodes.</div>
+      </section>
+    </main>
+
+    <footer><span>BASEER 2 • ROS 2 Safety Dashboard</span><span>Topics: /baseer2/alerts · /baseer2/scada_event · /baseer2/gas_ppm · /baseer2/gps</span></footer>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
